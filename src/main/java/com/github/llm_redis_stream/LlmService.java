@@ -31,10 +31,13 @@ public class LlmService {
     private final StreamReceiver<String, MapRecord<String, String, String>> streamReceiver;
 
     public SendMessageResponseDto sendMessage(SendMessageRequestDto requestDto) {
+        // 스트림될 메시지의 고유 ID 생성
         String streamMessageId = UUID.randomUUID().toString();
 
+        // Claude API 요청 생성
         ClaudeRequestBody claudeRequestBody = createClaudeRequestBody(requestDto);
 
+        // Claude API 요청 보내고 응답되는 메세지 스트림 처리
         claudeWebClient.post()
                 .bodyValue(claudeRequestBody)
                 .retrieve()
@@ -54,6 +57,7 @@ public class LlmService {
                 })
                 .subscribe();
 
+        // streamMessageId 반환
         return SendMessageResponseDto.builder()
                 .streamMessageId(streamMessageId)
                 .build();
